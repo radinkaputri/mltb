@@ -20,8 +20,8 @@ from bot import (
 from bot.helper.telegram_helper.message_utils import sendMessage, sendStatusMessage
 from bot.helper.ext_utils.bot_utils import sync_to_async
 from bot.helper.ext_utils.links_utils import get_mega_link_type
-from bot.helper.mirror_utils.status_utils.mega_download_status import MegaDownloadStatus
-from bot.helper.mirror_utils.status_utils.queue_status import QueueStatus
+from bot.helper.mirror_leech_utils.status_utils.mega_download_status import MegaDownloadStatus
+from bot.helper.mirror_leech_utils.status_utils.queue_status import QueueStatus
 from bot.helper.ext_utils.task_manager import check_running_tasks, stop_duplicate_check
 
 
