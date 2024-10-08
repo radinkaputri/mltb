@@ -55,6 +55,7 @@ from .modules import (
     ytdlp,
     rss,
     shell,
+    speedtest,
     users_settings,
     bot_settings,
     help,
@@ -128,10 +129,11 @@ NOTE: Try each command without any argument to see more detalis.<blockquote>
 /{BotCommands.RestartCommand}: Restart and update the bot (Only Owner & Sudo).
 /{BotCommands.LogCommand}: Get a log file of the bot. Handy for getting crash reports (Only Owner & Sudo).
 /{BotCommands.ShellCommand}: Run shell commands (Only Owner).
+/{BotCommands.SpeedCommand[0]}: Run speedtest
 /{BotCommands.AExecCommand}: Exec async functions (Only Owner).
 /{BotCommands.ExecCommand}: Exec sync functions (Only Owner).
 /{BotCommands.ClearLocalsCommand}: Clear {BotCommands.AExecCommand} or {BotCommands.ExecCommand} locals (Only Owner).
-/{BotCommands.RssCommand}: RSS Menu.</blockquote>
+/{BotCommands.RssCommand}: RSS Menu.</blockquote expandable>
 """
 
 

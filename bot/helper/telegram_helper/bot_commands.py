@@ -41,5 +41,6 @@ class _BotCommands:
         self.RssCommand = f"rss{CMD_SUFFIX}"
         self.BroadcastCommand = f"broadcast{CMD_SUFFIX}"
         self.MediaInfoCommand = f"mediainfo{CMD_SUFFIX}"
+        self.SpeedCommand = [f"speedtest{CMD_SUFFIX}", f"sp{CMD_SUFFIX}"]
 
 BotCommands = _BotCommands()
