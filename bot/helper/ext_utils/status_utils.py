@@ -203,7 +203,7 @@ async def get_readable_message(sid, is_user, page_no=1, status="All", page_step=
             msg += f" | <b>Time: </b>{task.seeding_time()}"
         else:
             msg += f"\n<b>Size: </b>{task.size()}"
-        msg += f"\n<b>Stop: </b><code>/{BotCommands.CancelTaskCommand[1]} {task.gid()}</code>\n\n"
+        msg += f"\n<b>Stop: </b>/{BotCommands.CancelTaskCommand}_{task.gid()}\n\n"
 
     if len(msg) == 0:
         if status == "All":
@@ -212,7 +212,7 @@ async def get_readable_message(sid, is_user, page_no=1, status="All", page_step=
             msg = f"No Active {status} Tasks!\n\n"
     buttons = ButtonMaker()
     if not is_user:
-        buttons.ibutton("📜", f"status {sid} ov", position="header")
+        buttons.ibutton("📜", f"status {sid} ov", position="footer")
     if len(tasks) > STATUS_LIMIT:
         msg += f"<b>Page:</b> {page_no}/{pages} | <b>Tasks:</b> {tasks_no} | <b>Step:</b> {page_step}\n"
         buttons.ibutton("<<", f"status {sid} pre", position="header")
@@ -228,7 +228,7 @@ async def get_readable_message(sid, is_user, page_no=1, status="All", page_step=
         msg += f"<b>Task Limit: </b>{config_dict['BOT_MAX_TASKS']} | <b>Run:</b> {len(tasks)} | <b>Free:</b> {config_dict['BOT_MAX_TASKS'] - len(tasks)}"
     else:
         msg += f"<b>Tasks Running:</b> {len(tasks)}"
-    buttons.ibutton("♻️", f"status {sid} ref", position="header")
+    buttons.ibutton("♻️", f"status {sid} ref", position="footer")
     button = buttons.build_menu(8)
     msg += f"\n<b>CPU:</b> {cpu_percent()}% | <b>FREE:</b> {get_readable_file_size(disk_usage(DOWNLOAD_DIR).free)}"
     msg += f"\n<b>RAM:</b> {virtual_memory().percent}% | <b>UP:</b> {get_readable_time(time() - botStartTime)}"

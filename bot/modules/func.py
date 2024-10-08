@@ -695,10 +695,9 @@ async def get_drive_link_button(message, link):
         if message.from_user.id == OWNER_ID:
             if config_dict["BOT_PM"] or message.chat.type == message.chat.type.PRIVATE: 
                 buttons.ubutton("☁️ Drive Link", link)
-        else:
-            buttons.ibutton("🚫 Drive Link", "no_drive_link")
     else:
         buttons.ubutton("☁️ Drive Link", link)
+
     return buttons
 
 
@@ -706,35 +705,19 @@ async def set_commands(bot):
     if config_dict['SET_COMMANDS']:
         await bot.set_bot_commands(commands=[
             BotCommand(BotCommands.StartCommand, "Start the bot"),
-            BotCommand(BotCommands.StatsCommand, "Get bot stats"),
-            BotCommand(BotCommands.StatusCommand, "Get bot status"),
-            BotCommand(BotCommands.RestartCommand, "Restart the bot"),
-            BotCommand(BotCommands.CloneCommand, "Start cloning"),
-            BotCommand(BotCommands.MirrorCommand[0], "Start mirroring"),
-            BotCommand(BotCommands.LeechCommand[0], "Start leeching"),
-            BotCommand(BotCommands.QbMirrorCommand[0], "Start qb mirroring"),
-            BotCommand(BotCommands.QbLeechCommand[0], "Start qb leeching"),
-            BotCommand(BotCommands.YtdlCommand[0], "Mirror youtube file"),
-            BotCommand(BotCommands.YtdlLeechCommand[0], "Leech youtube file"),
-            BotCommand(BotCommands.CancelTaskCommand[0], "Cancel any task"),
-            BotCommand(BotCommands.CancelAllCommand, "Cancel all task"),
-            BotCommand(BotCommands.ListCommand, "Search file in google drive"),
-            BotCommand(BotCommands.DeleteCommand, "Delete google drive file"),
-            BotCommand(BotCommands.ForceStartCommand[0], "Force start a task"),
+            BotCommand(BotCommands.MirrorCommand[0], "Start mirroring (or " + BotCommands.MirrorCommand[1] + ")"),
+            BotCommand(BotCommands.LeechCommand[0], "Start leeching (or " + BotCommands.LeechCommand[1] + ")"),
+            BotCommand(BotCommands.QbMirrorCommand[0], "Start qb mirroring (or " + BotCommands.QbMirrorCommand[1] + ")"),
+            BotCommand(BotCommands.QbLeechCommand[0], "Start qb leeching (or " + BotCommands.QbLeechCommand[1] + ")"),
+            BotCommand(BotCommands.YtdlCommand[0], "Mirror youtube file (or " + BotCommands.YtdlCommand[1] + ")"),
+            BotCommand(BotCommands.YtdlLeechCommand[0], "Leech youtube file (or " + BotCommands.YtdlLeechCommand[1] + ")"),
             BotCommand(BotCommands.ListCommand, "List files in Google Drive"),
-            BotCommand(BotCommands.SearchCommand, "Search files in Google Drive"),
-            BotCommand(BotCommands.UsersCommand, "Check users"),
-            BotCommand(BotCommands.AuthorizeCommand, "Authorize a user"),
-            BotCommand(BotCommands.UnAuthorizeCommand, "Unauthorize a user"),
-            BotCommand(BotCommands.AddSudoCommand, "Add a sudo user"),
-            BotCommand(BotCommands.RmSudoCommand, "Remove a sudo user"),
+            BotCommand(BotCommands.SearchCommand, "Search torrents"),
+            BotCommand(BotCommands.CancelTaskCommand, "Cancel any task"),
+            BotCommand(BotCommands.CancelAllCommand, "Cancel all tasks"),
             BotCommand(BotCommands.PingCommand, "Ping the bot"),
             BotCommand(BotCommands.HelpCommand, "Get help"),
-            BotCommand(BotCommands.LogCommand, "Get bot log"),
-            BotCommand(BotCommands.BotSetCommand[0], "Bot settings"),
-            BotCommand(BotCommands.UserSetCommand[0], "User settings"),
-            BotCommand(BotCommands.BtSelectCommand, "Select a BT download"),
-            BotCommand(BotCommands.RssCommand, "Manage RSS feeds"),
+            BotCommand(BotCommands.RestartCommand, "Restart the bot (only owner)"),
         ])
 
 

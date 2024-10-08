@@ -37,7 +37,7 @@ pyroutils.MIN_CHANNEL_ID = -100999999999999
 getLogger("qbittorrentapi").setLevel(INFO)
 getLogger("requests").setLevel(INFO)
 getLogger("urllib3").setLevel(INFO)
-getLogger("electrogram").setLevel(ERROR)
+getLogger("pyrogram").setLevel(ERROR)
 getLogger("httpx").setLevel(ERROR)
 getLogger("pymongo").setLevel(ERROR)
 

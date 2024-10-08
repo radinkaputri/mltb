@@ -97,7 +97,7 @@ async def log(_, message):
 
 
 help_string = f"""
-NOTE: Try each command without any argument to see more detalis.
+NOTE: Try each command without any argument to see more detalis.<blockquote>
 /{BotCommands.MirrorCommand[0]}: Start mirroring to Google Drive.
 /{BotCommands.QbMirrorCommand[0]}: Start Mirroring to Google Drive using qBittorrent.
 /{BotCommands.JdMirrorCommand[0]}: Start Mirroring to Google Drive using JDownloader.
@@ -112,7 +112,7 @@ NOTE: Try each command without any argument to see more detalis.
 /{BotCommands.UserSetCommand[0]} [query]: Users settings.
 /{BotCommands.BotSetCommand[0]} [query]: Bot settings.
 /{BotCommands.BtSelectCommand}: Select files from torrents by gid or reply.
-/{BotCommands.CancelTaskCommand[0]} [gid]: Cancel task by gid or reply.
+/{BotCommands.CancelTaskCommand} [gid]: Cancel task by gid or reply.
 /{BotCommands.ForceStartCommand[0]} [gid]: Force start task by gid or reply.
 /{BotCommands.CancelAllCommand} [query]: Cancel all [status] tasks.
 /{BotCommands.ListCommand} [query]: Search in Google Drive(s).
@@ -131,7 +131,7 @@ NOTE: Try each command without any argument to see more detalis.
 /{BotCommands.AExecCommand}: Exec async functions (Only Owner).
 /{BotCommands.ExecCommand}: Exec sync functions (Only Owner).
 /{BotCommands.ClearLocalsCommand}: Clear {BotCommands.AExecCommand} or {BotCommands.ExecCommand} locals (Only Owner).
-/{BotCommands.RssCommand}: RSS Menu.
+/{BotCommands.RssCommand}: RSS Menu.</blockquote>
 """
 
 
@@ -166,7 +166,7 @@ async def restart_notification():
     if INCOMPLETE_TASK_NOTIFIER and DATABASE_URL:
         if notifier_dict := await DbManager().get_incomplete_tasks():
             for cid, data in notifier_dict.items():
-                msg = "Restarted Successfully!" if cid == chat_id else "Bot Restarted!"
+                msg = "Restarted Successfully!" if cid == chat_id else "Bot Restarted!\nIncomplete task:"
                 for tag, links in data.items():
                     msg += f"\n\n{tag}: "
                     for index, link in enumerate(links, start=1):

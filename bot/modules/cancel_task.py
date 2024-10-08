@@ -18,7 +18,10 @@ from bot.helper.telegram_helper.message_utils import (
 
 async def cancel_task(_, message):
     user_id = message.from_user.id if message.from_user else message.sender_chat.id
-    msg = message.text.split()
+    msg = re_search(
+        rf"/(?:{BotCommands.CancelTaskCommand})(?:@{bot_name})?[_ ]([a-zA-Z0-9_-]+)(?:@{bot_name})?",
+        message.text
+    )
     if len(msg) > 1:
         gid = msg[1]
         if len(gid) == 4:
@@ -38,7 +41,7 @@ async def cancel_task(_, message):
     elif len(msg) == 1:
         msg = (
             "Reply to an active Command message which was used to start the download"
-            f" or send <code>/{BotCommands.CancelTaskCommand[0]} GID</code> to cancel it!"
+            f" or send <code>/{BotCommands.CancelTaskCommand} GID</code> to cancel it!"
         )
         await sendMessage(message, msg)
         return
@@ -165,7 +168,9 @@ async def cancel_all_update(_, query):
 bot.add_handler(
     MessageHandler(
         cancel_task,
-        filters=command(BotCommands.CancelTaskCommand) & CustomFilters.authorized,
+        filters=regex(
+            rf"^/{BotCommands.CancelTaskCommand}(_\w+)?(?!all)"
+        ) & CustomFilters.authorized,
     )
 )
 bot.add_handler(
