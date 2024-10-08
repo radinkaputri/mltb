@@ -44,7 +44,7 @@ from bot.helper.telegram_helper.message_utils import (
     delete_status,
     update_status_message,
 )
-from bot.modules.func import get_drive_link_button, get_bot_pm_button, send_to_chat
+from bot.modules.func import get_bot_pm_button, send_to_chat
 
 
 class TaskListener(TaskConfig):
@@ -257,14 +257,17 @@ class TaskListener(TaskConfig):
         if config_dict["SAFE_MODE"]:
             msg = f"<b>Safe Mode Enabled</b>"
         else:
-            msg = f"<b>Name: </b><code>{escape(self.name)}</code>"
-        msg += f"\n\n<b>• Size: </b>{get_readable_file_size(self.size)}"
+            msg = f"<b>{escape(self.name)}</b>"
+        msg += (
+          f"\n<b>cc: </b>{self.tag}\n"
+          f"\n<code>Size   : </code>{get_readable_file_size(self.size)}"
+          )
         LOGGER.info(f"Task Done: {self.name}")
         if self.isLeech:
-            msg += f"\n<b>• Total Files: </b>{folders}"
+            msg += f"\n<code>Total  : </code>{folders}"
+            msg += f"\n<code>Mode   : </code>Leech"
             if mime_type != 0:
-                msg += f"\n<b>• Corrupted Files: </b>{mime_type}"
-            msg += f"\n\n<b>• User: </b>{self.tag}\n<b>• User ID: </b> <code>{self.message.from_user.id}</code>\n\n"
+                msg += f"\n<code>Corrupt:  </code>{mime_type}"
             if not files:
                 if config_dict["BOT_PM"] and self.message.chat.type != self.message.chat.type.PRIVATE:
                     pmmsg = f"<b>Files has been sent in private.</b>"
@@ -274,7 +277,7 @@ class TaskListener(TaskConfig):
             else:
                 fmsg = ""
                 for index, (link, name) in enumerate(files.items(), start=1):
-                    fmsg += f"{index}. <a href='{link}'>{name}</a>\n"
+                    fmsg += f"\n{index}. <a href='{link}'>{name}</a>\n"
                     if len(fmsg.encode() + msg.encode()) > 4000:
                         await sendMessage(self.message, msg + fmsg)
                         await sleep(1)
@@ -290,10 +293,10 @@ class TaskListener(TaskConfig):
                     else:
                         await sendMessage(self.message, msg + fmsg)
         else:
-            msg += f"\n<b>• Type: </b>{mime_type}"
+            msg += f"\n<code>Type   : </code>{mime_type}"
+            msg += f"\n<code>Mode   : </code>Mirror"
             if mime_type == "Folder":
-                msg += f"\n<b>• SubFolders: </b>{folders}"
-                msg += f"\n<b>• Files: </b>{files}"
+                msg += f"\n<code>Files  : </code>{files}"
             if (
                 link
                 or rclonePath
@@ -301,10 +304,12 @@ class TaskListener(TaskConfig):
                 and not self.privateLink
             ):
                 buttons = ButtonMaker()
-                if link:
-                    buttons = await get_drive_link_button(self.message, link)
+                if link.startswith("https://drive.google.com/") and not config_dict["DISABLE_DRIVE_LINK"]:
+                  buttons.ubutton("♻️ Drive link", link)
+                elif not link.startswith("https://drive.google.com/"):
+                  buttons.ubutton("☁️ Cloud link", link)
                 elif rclonePath:
-                    msg += f"\n\n• Path: <code>{rclonePath}</code>"
+                    msg += f"\n\nPath: <code>{rclonePath}</code>"
                 if (
                     rclonePath
                     and (RCLONE_SERVE_URL := config_dict["RCLONE_SERVE_URL"])
@@ -330,9 +335,8 @@ class TaskListener(TaskConfig):
                             buttons.ubutton("🌐 View Link", share_urls)
                 button = buttons.build_menu(2)
             else:
-                msg += f"\n\n• Path: <code>{rclonePath}</code>"
+                msg += f"\n<code>Path   : </code>{rclonePath}"
                 button = None
-            msg += f"\n\n<b>• User: </b>{self.tag}\n<b>• User ID: </b> <code>{self.message.from_user.id}</code>"
             if config_dict["BOT_PM"] and self.message.chat.type != self.message.chat.type.PRIVATE:
                 bmsg = f"\n\n<b>Links has been sent in private.</b>"
                 await send_to_chat(chat_id=self.message.from_user.id, message=self.message, text=msg, buttons=button, photo=True)

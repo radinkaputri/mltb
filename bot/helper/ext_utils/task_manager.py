@@ -59,6 +59,7 @@ async def stop_duplicate_check(listener):
         if telegraph_content:
             if config_dict['BOT_PM'] and message.chat.type != message.chat.type.PRIVATE:
                 msg = f"File/Folder is already available in Drive.\n\nI have sent available file link in pm."
+                button = await get_bot_pm_button()
                 pmmsg = f"Hey {tag}.\n\nFile/Folder is already available in Drive.\n\nHere are {contents_no} list results:"
                 pmbutton = await get_telegraph_list(telegraph_content)
                 button = await get_bot_pm_button()

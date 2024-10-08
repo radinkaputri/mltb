@@ -689,18 +689,6 @@ async def callback_handler(client, CallbackQuery):
     await CallbackQuery.answer(text=msg, show_alert=True)
 
 
-async def get_drive_link_button(message, link):
-    buttons = ButtonMaker()
-    if config_dict['DISABLE_DRIVE_LINK']:
-        if message.from_user.id == OWNER_ID:
-            if config_dict["BOT_PM"] or message.chat.type == message.chat.type.PRIVATE: 
-                buttons.ubutton("☁️ Drive Link", link)
-    else:
-        buttons.ubutton("☁️ Drive Link", link)
-
-    return buttons
-
-
 async def set_commands(bot):
     if config_dict['SET_COMMANDS']:
         await bot.set_bot_commands(commands=[
@@ -717,6 +705,7 @@ async def set_commands(bot):
             BotCommand(BotCommands.CancelAllCommand, "Cancel all tasks"),
             BotCommand(BotCommands.PingCommand, "Ping the bot"),
             BotCommand(BotCommands.HelpCommand, "Get help"),
+            BotCommand(BotCommands.UserSetCommand[0], "Open user setting menu (or " + BotCommands.UserSetCommand[1] + ")"),
             BotCommand(BotCommands.RestartCommand, "Restart the bot (only owner)"),
         ])
 

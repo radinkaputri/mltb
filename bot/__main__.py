@@ -98,7 +98,7 @@ async def log(_, message):
 
 
 help_string = f"""
-NOTE: Try each command without any argument to see more detalis.<blockquote>
+NOTE: Try each command without any argument to see more detalis.<blockquote expandable>
 /{BotCommands.MirrorCommand[0]}: Start mirroring to Google Drive.
 /{BotCommands.QbMirrorCommand[0]}: Start Mirroring to Google Drive using qBittorrent.
 /{BotCommands.JdMirrorCommand[0]}: Start Mirroring to Google Drive using JDownloader.
@@ -133,7 +133,7 @@ NOTE: Try each command without any argument to see more detalis.<blockquote>
 /{BotCommands.AExecCommand}: Exec async functions (Only Owner).
 /{BotCommands.ExecCommand}: Exec sync functions (Only Owner).
 /{BotCommands.ClearLocalsCommand}: Clear {BotCommands.AExecCommand} or {BotCommands.ExecCommand} locals (Only Owner).
-/{BotCommands.RssCommand}: RSS Menu.</blockquote expandable>
+/{BotCommands.RssCommand}: RSS Menu.</blockquote>
 """
 
 
