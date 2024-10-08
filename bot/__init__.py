@@ -227,6 +227,13 @@ else:
     IS_PREMIUM_USER = False
     user = ""
 
+MEGA_EMAIL = environ.get("MEGA_EMAIL", "")
+MEGA_PASSWORD = environ.get("MEGA_PASSWORD", "")
+if len(MEGA_EMAIL) == 0 or len(MEGA_PASSWORD) == 0:
+    log_warning("MEGA Credentials not provided!")
+    MEGA_EMAIL = ""
+    MEGA_PASSWORD = ""
+
 JD_EMAIL = environ.get("JD_EMAIL", "")
 JD_PASS = environ.get("JD_PASS", "")
 if len(JD_EMAIL) == 0 or len(JD_PASS) == 0:
@@ -507,6 +514,8 @@ config_dict = {
     "INCOMPLETE_TASK_NOTIFIER": INCOMPLETE_TASK_NOTIFIER,
     "INDEX_URL": INDEX_URL,
     "IS_TEAM_DRIVE": IS_TEAM_DRIVE,
+    "MEGA_EMAIL": MEGA_EMAIL,
+    "MEGA_PASSWORD": MEGA_PASSWORD,
     "JD_EMAIL": JD_EMAIL,
     "JD_PASS": JD_PASS,
     "LEECH_DUMP_CHAT": LEECH_DUMP_CHAT,
