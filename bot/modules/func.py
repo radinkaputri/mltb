@@ -739,6 +739,8 @@ async def start(client, message):
         return await send_to_chat(message=message, text=f"Token refreshed successfully", buttons=None, reply=True, photo=True)
     else:
         buttons = ButtonMaker()
+        is_authorized = await CustomFilters.authorized(client, message)
+        status = "True" if is_authorized else "False"
         buttons.ubutton("Repo", "https://github.com/radinkaputri/mltb")
         buttons.ubutton("Owner", "tg://user?id=7011286069")
         reply_markup = buttons.build_menu(2)

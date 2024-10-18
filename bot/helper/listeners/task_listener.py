@@ -256,12 +256,9 @@ class TaskListener(TaskConfig):
         ):
             await DbManager().rm_complete_task(self.message.link)
         pmbutton = await get_bot_pm_button()
-        if config_dict["SAFE_MODE"]:
-            msg = f"<b>Task done and has been upload</b>"
-        else:
-            msg = f"<b>Name: </b><code>{escape(self.name)}</code>"
+        msg = f"<b>Name: </b><code>{escape(self.name)}</code>"
         msg += f"\n\n<blockquote><b>┎Size: </b>{get_readable_file_size(self.size)}"
-        msg += f"\n<b>Elapse: </b>Elapsed: </b>{get_readable_time(time() - self.time)}"
+        msg += f"\n<b>┠Elapse: </b>{get_readable_time(time() - self.time)}"
         LOGGER.info(f"Task Done: {self.name}")
         if self.isLeech:
             msg += f"\n<b>┠Total Files: </b>{folders}"
@@ -285,9 +282,9 @@ class TaskListener(TaskConfig):
                 if fmsg != "":
                     if config_dict["SAFE_MODE"]:
                         fmsg = ""
-                        pmmsg = f"<b>Files has been sent in private.</b>"
+                        pmmsg = f"<b>Sent to private message</b>"
                     else:
-                        pmmsg = f"\n<b>Files has been sent in private.</b>"
+                        pmmsg = f"\n<b>Sent to private message</b>"
                     if config_dict["BOT_PM"] and self.message.chat.type != self.message.chat.type.PRIVATE:
                         await sendMessage(self.message, msg + fmsg + pmmsg, pmbutton)
                     else:
@@ -335,9 +332,9 @@ class TaskListener(TaskConfig):
             else:
                 msg += f"\n\nPath: <code>{rclonePath}</code>"
                 button = None
-            msg += f"\n┖<b>cc: </b>{self.tag}</blockquote>\n\n"
+            msg += f"\n┖<b>cc: </b>{self.tag}</blockquote>"
             if config_dict["BOT_PM"] and self.message.chat.type != self.message.chat.type.PRIVATE:
-                bmsg = f"\n\n<b>Sent to private message</b>"
+                bmsg = f"\n\n<b>Sent to cloud storage</b>"
                 await send_to_chat(chat_id=self.message.from_user.id, message=self.message, text=msg, buttons=button, photo=True)
                 await sendMessage(self.message, msg+bmsg, pmbutton)
             else:
