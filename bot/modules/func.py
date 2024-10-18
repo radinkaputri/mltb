@@ -727,7 +727,7 @@ async def set_commands(bot):
 async def start(client, message):
     if len(message.command) > 1:
         userid = message.from_user.id
-        rad = "https://github.com/xyrad-bot/xyrad/raw/refs/heads/main/images/profile_pict.jpg"
+        rad += "https://github.com/xyrad-bot/xyrad/raw/refs/heads/main/images/profile_pict.jpg"
         input_token = message.command[1]
         if userid not in user_data:
             return await send_to_chat(message=message, text=f"Who are you?", buttons=None, photo=False)
