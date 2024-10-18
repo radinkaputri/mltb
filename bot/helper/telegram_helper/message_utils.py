@@ -1,5 +1,6 @@
 from asyncio import sleep
 from pyrogram.errors import FloodWait
+from pyrogram.types import InputMediaPhoto
 from re import match as re_match
 from time import time
 from random import choice as rchoice
@@ -10,34 +11,63 @@ from bot.helper.ext_utils.exceptions import TgLinkException
 from bot.helper.ext_utils.status_utils import get_readable_message
 
 
-async def sendMessage(message, text, buttons=None, block=True, photo=False):
+async def sendMessage(message, text, buttons=None, photo=None):
     try:
-        if photo and config_dict["IMAGES"]:
-                return await bot.send_photo(chat_id=message.chat.id, photo=rchoice(config_dict["IMAGES"]), caption=text, reply_to_message_id=message.id, reply_markup=buttons, disable_notification=True)
-        else:
-            return await message.reply(text=text, quote=True, disable_web_page_preview=True, disable_notification=True, reply_markup=buttons)
+        if photo:
+            try:
+                if photo == "Random":
+                    photo = choice(IMAGES)
+                return await message.reply_photo(
+                    photo=photo,
+                    reply_to_message_id=message.id,
+                    caption=text,
+                    reply_markup=buttons,
+                    disable_notification=True,
+                )
+            except IndexError:
+                pass
+            except (PhotoInvalidDimensions, WebpageCurlFailed, MediaEmpty):
+                des_dir = await download_image_url(photo)
+                await send_message(message, text, buttons, des_dir)
+                await aioremove(des_dir)
+                return None
+            except Exception:
+                LOGGER.error(format_exc())
+        return await message.reply(
+            text=text,
+            quote=True,
+            disable_web_page_preview=True,
+            disable_notification=True,
+            reply_markup=buttons,
+        )
     except FloodWait as f:
         LOGGER.warning(str(f))
-        if block:
-            await sleep(f.value * 1.2)
-            return await sendMessage(message, text, buttons)
-        return str(f)
+        await sleep(f.value * 1.2)
+        return await send_message(message, text, buttons, photo)
+    except ReplyMarkupInvalid:
+        return await send_message(message, text, None, photo)
     except Exception as e:
-        LOGGER.error(str(e))
+        LOGGER.error(format_exc())
         return str(e)
 
 
-async def editMessage(message, text, buttons=None, block=True):
+async def editMessage(message, text, buttons=None, photo=None):
     try:
+        if message.media:
+            if photo:
+                return await message.edit_media(
+                    InputMediaPhoto(photo, text), reply_markup=buttons
+                )
+            return await message.edit_caption(caption=text, reply_markup=buttons)
         await message.edit(
             text=text, disable_web_page_preview=True, reply_markup=buttons
         )
     except FloodWait as f:
         LOGGER.warning(str(f))
-        if block:
-            await sleep(f.value * 1.2)
-            return await editMessage(message, text, buttons)
-        return str(f)
+        await sleep(f.value * 1.2)
+        return await edit_message(message, text, buttons, photo)
+    except (MessageNotModified, MessageEmpty):
+        pass
     except Exception as e:
         LOGGER.error(str(e))
         return str(e)

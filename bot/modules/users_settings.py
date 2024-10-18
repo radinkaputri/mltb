@@ -3,7 +3,8 @@ from asyncio import sleep
 from functools import partial
 from html import escape
 from io import BytesIO
-from os import getcwd
+from os import getcwd, path as ospath
+from PIL import Image
 from pyrogram.filters import command, regex, create
 from pyrogram.handlers import MessageHandler, CallbackQueryHandler
 from time import time
@@ -218,7 +219,7 @@ async def update_user_settings(query):
         thumbnail = "https://github.com/xyrad-bot/xyrad/raw/refs/heads/main/images/profile_pict.jpg"
     await edit_message(query.message, msg, button, thumbnail)
 
-
+@new_thread
 async def user_settings(_, message):
     from_user = message.from_user
     handler_dict[from_user.id] = False
