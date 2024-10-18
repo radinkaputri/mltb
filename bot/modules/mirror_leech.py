@@ -359,6 +359,8 @@ class Mirror(TaskListener):
             await add_qb_torrent(self, path, ratio, seed_time)
         elif is_rclone_path(self.link):
             await add_rclone_download(self, f"{path}/")
+        elif is_mega_link(self.link):
+            await add_mega_download(self, f"{path}/")
         elif is_gdrive_link(self.link) or is_gdrive_id(self.link):
             await add_gd_download(self, path)
         else:

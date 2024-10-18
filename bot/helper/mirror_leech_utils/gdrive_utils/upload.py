@@ -146,7 +146,7 @@ class gdUpload(GoogleDriveHelper):
         # File body description
         file_metadata = {
             "name": file_name,
-            "description": "Uploaded using Rad by {self.listener.tag}, ID: {self.listener.message.from_user.id}",
+            "description": "Uploaded with mirror-bot",
             "mimeType": mime_type,
         }
         if dest_id is not None:

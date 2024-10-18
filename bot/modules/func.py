@@ -727,6 +727,7 @@ async def set_commands(bot):
 async def start(client, message):
     if len(message.command) > 1:
         userid = message.from_user.id
+        rad = "https://github.com/xyrad-bot/xyrad/raw/refs/heads/main/images/profile_pict.jpg"
         input_token = message.command[1]
         if userid not in user_data:
             return await send_to_chat(message=message, text=f"Who are you?", buttons=None, photo=False)
@@ -736,20 +737,20 @@ async def start(client, message):
         data['token'] = str(uuid4())
         data['time'] = time()
         user_data[userid].update(data)
-        return await send_to_chat(message=message, text=f"Token refreshed successfully", buttons=None, reply=True, photo=True)
+        return await send_to_chat(message=message, text=f"Token refreshed successfully", buttons=None, reply=True, rad)
     else:
         buttons = ButtonMaker()
         is_authorized = await CustomFilters.authorized(client, message)
         status = "True" if is_authorized else "False"
-        buttons.ubutton("Repo", "https://github.com/radinkaputri/mltb")
+        rad = "https://github.com/xyrad-bot/xyrad/raw/refs/heads/main/images/profile_pict.jpg"
         buttons.ubutton("Owner", "tg://user?id=7011286069")
-        reply_markup = buttons.build_menu(2)
+        reply_markup = buttons.build_menu(1)
         start_string = f'''<b>Hello, I am {bot_name}
 <blockquote>I can help you mirror links, files, or torrents to Google Drive, rclone cloud, or Telegram.</blockquote>
 Type /{BotCommands.HelpCommand} to see the list of commands.
 
 Uptime: {get_readable_time(time() - botStartTime)} | Authorized? {status}</b>'''
-        await send_to_chat(message=message, text=start_string, buttons=reply_markup, reply=True, photo=True)
+        await send_to_chat(message=message, text=start_string, buttons=reply_markup, reply=True, rad)
     await DbManager().update_pm_users(message.from_user.id)
 
 

@@ -212,14 +212,22 @@ YT-DLP Options is <b><code>{escape(ytopt)}</code></b>"""
 
 async def update_user_settings(query):
     msg, button = await get_user_settings(query.from_user)
-    await editMessage(query.message, msg, button)
+    user_id = query.from_user.id
+    thumbnail = f"Thumbnails/{user_id}.jpg"
+    if not ospath.exists(thumbnail):
+        thumbnail = "https://github.com/xyrad-bot/xyrad/raw/refs/heads/main/images/profile_pict.jpg"
+    await edit_message(query.message, msg, button, thumbnail)
 
 
 async def user_settings(_, message):
     from_user = message.from_user
     handler_dict[from_user.id] = False
     msg, button = await get_user_settings(from_user)
-    await sendMessage(message, msg, button)
+    user_id = message.from_user.id
+    thumbnail = f"Thumbnails/{user_id}.jpg"
+    if not ospath.exists(thumbnail):
+        thumbnail = "https://github.com/xyrad-bot/xyrad/raw/refs/heads/main/images/profile_pict.jpg"
+    await send_message(message, msg, button, thumbnail)
 
 
 async def set_thumb(_, message, pre_event):
