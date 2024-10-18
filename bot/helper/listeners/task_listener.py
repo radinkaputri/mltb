@@ -30,7 +30,7 @@ from bot.helper.ext_utils.files_utils import (
     join_files,
 )
 from bot.helper.ext_utils.links_utils import is_gdrive_id
-from bot.helper.ext_utils.status_utils import get_readable_file_size
+from bot.helper.ext_utils.status_utils import get_readable_file_size, get_readable_time
 from bot.helper.ext_utils.task_manager import start_from_queued, check_running_tasks
 from bot.helper.mirror_leech_utils.gdrive_utils.upload import gdUpload
 from bot.helper.mirror_leech_utils.rclone_utils.transfer import RcloneTransferHelper
@@ -51,6 +51,7 @@ from bot.modules.func import get_drive_link_button, get_bot_pm_button, send_to_c
 class TaskListener(TaskConfig):
     def __init__(self):
         super().__init__()
+        self.time = time()
 
     async def clean(self):
         try:
