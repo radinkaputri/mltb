@@ -6,6 +6,7 @@ from secrets import token_urlsafe
 from aioshutil import move, copy2
 from pyrogram.enums import ChatAction
 from re import sub, I
+from time import time
 
 from bot import (
     DOWNLOAD_DIR,
@@ -80,6 +81,7 @@ class TaskConfig:
         self.upDest = ""
         self.rcFlags = ""
         self.tag = ""
+        self.time = ""
         self.name = ""
         self.newDir = ""
         self.nameSub = ""

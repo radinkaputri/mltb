@@ -26,7 +26,7 @@ from os import remove as osremove, rename as osrename, path as ospath, replace a
 from pyrogram.errors import PeerIdInvalid, RPCError, UserNotParticipant, FloodWait
 from psutil import disk_usage, cpu_percent, swap_memory, cpu_count, virtual_memory, net_io_counters, boot_time
 
-from bot import bot, botStartTime, config_dict, task_dict_lock, task_dict, DATABASE_URL, DOWNLOAD_DIR, GLOBAL_BLACKLIST_FILE_KEYWORDS, LOGGER, OWNER_ID, shorteneres_list, user_data
+from bot import bot, bot_name, botStartTime, config_dict, task_dict_lock, task_dict, DATABASE_URL, DOWNLOAD_DIR, GLOBAL_BLACKLIST_FILE_KEYWORDS, LOGGER, OWNER_ID, shorteneres_list, user_data
 from bot.helper.ext_utils.db_handler import DbManager
 from bot.helper.ext_utils.files_utils import get_base_name
 from bot.helper.ext_utils.telegraph_helper import telegraph
@@ -706,35 +706,21 @@ async def set_commands(bot):
     if config_dict['SET_COMMANDS']:
         await bot.set_bot_commands(commands=[
             BotCommand(BotCommands.StartCommand, "Start the bot"),
-            BotCommand(BotCommands.StatsCommand, "Get bot stats"),
-            BotCommand(BotCommands.StatusCommand, "Get bot status"),
-            BotCommand(BotCommands.RestartCommand, "Restart the bot"),
-            BotCommand(BotCommands.CloneCommand, "Start cloning"),
-            BotCommand(BotCommands.MirrorCommand[0], "Start mirroring"),
-            BotCommand(BotCommands.LeechCommand[0], "Start leeching"),
-            BotCommand(BotCommands.QbMirrorCommand[0], "Start qb mirroring"),
-            BotCommand(BotCommands.QbLeechCommand[0], "Start qb leeching"),
-            BotCommand(BotCommands.YtdlCommand[0], "Mirror youtube file"),
-            BotCommand(BotCommands.YtdlLeechCommand[0], "Leech youtube file"),
-            BotCommand(BotCommands.CancelTaskCommand[0], "Cancel any task"),
-            BotCommand(BotCommands.CancelAllCommand, "Cancel all task"),
-            BotCommand(BotCommands.ListCommand, "Search file in google drive"),
-            BotCommand(BotCommands.DeleteCommand, "Delete google drive file"),
-            BotCommand(BotCommands.ForceStartCommand[0], "Force start a task"),
-            BotCommand(BotCommands.ListCommand, "List files in Google Drive"),
-            BotCommand(BotCommands.SearchCommand, "Search files in Google Drive"),
-            BotCommand(BotCommands.UsersCommand, "Check users"),
-            BotCommand(BotCommands.AuthorizeCommand, "Authorize a user"),
-            BotCommand(BotCommands.UnAuthorizeCommand, "Unauthorize a user"),
-            BotCommand(BotCommands.AddSudoCommand, "Add a sudo user"),
-            BotCommand(BotCommands.RmSudoCommand, "Remove a sudo user"),
+            BotCommand(BotCommands.MirrorCommand[0], "Start mirroring (or " + BotCommands.MirrorCommand[1] + ")"),
+            BotCommand(BotCommands.LeechCommand[0], "Start leeching (or " + BotCommands.LeechCommand[1] + ")"),
+            BotCommand(BotCommands.QbMirrorCommand[0], "Start torrent mirroring (or " + BotCommands.QbMirrorCommand[1] + ")"),
+            BotCommand(BotCommands.QbLeechCommand[0], "Start torrent leeching (or " + BotCommands.QbLeechCommand[1] + ")"),
+            BotCommand(BotCommands.YtdlCommand[0], "Mirror with ytdlp (or " + BotCommands.YtdlCommand[1] + ")"),
+            BotCommand(BotCommands.YtdlLeechCommand[0], "Leech with ytdlp (or " + BotCommands.YtdlLeechCommand[1] + ")"),
+            BotCommand(BotCommands.ListCommand, "Search files in mirror Drive"),
+            BotCommand(BotCommands.CloneCommand, "Cloning files to mirror Drive"),
+            BotCommand(BotCommands.SearchCommand, "Search something from torrents site"),
+            BotCommand(BotCommands.CancelTaskCommand, "Cancel one task"),
+            BotCommand(BotCommands.CancelAllCommand, "Cancel all tasks"),
             BotCommand(BotCommands.PingCommand, "Ping the bot"),
             BotCommand(BotCommands.HelpCommand, "Get help"),
-            BotCommand(BotCommands.LogCommand, "Get bot log"),
-            BotCommand(BotCommands.BotSetCommand[0], "Bot settings"),
-            BotCommand(BotCommands.UserSetCommand[0], "User settings"),
-            BotCommand(BotCommands.BtSelectCommand, "Select a BT download"),
-            BotCommand(BotCommands.RssCommand, "Manage RSS feeds"),
+            BotCommand(BotCommands.UserSetCommand[0], "Open user setting menu (or " + BotCommands.UserSetCommand[1] + ")"),
+            BotCommand(BotCommands.RestartCommand, "Restart the bot (only owner)"),
         ])
 
 
@@ -753,10 +739,14 @@ async def start(client, message):
         return await send_to_chat(message=message, text=f"Token refreshed successfully", buttons=None, reply=True, photo=True)
     else:
         buttons = ButtonMaker()
-        buttons.ubutton("Repo", "https://github.com/SN-Abdullah-Al-Noman/Atrocious_Mirror")
-        buttons.ubutton("Owner", "https://t.me/AtrociousMirrorBackup")
+        buttons.ubutton("Repo", "https://github.com/radinkaputri/mltb")
+        buttons.ubutton("Owner", "tg://user?id=7011286069")
         reply_markup = buttons.build_menu(2)
-        start_string = f'''This bot can mirror all your links|files|torrents to Google Drive or any rclone cloud or to telegram.\nType /{BotCommands.HelpCommand} to get a list of available commands'''
+        start_string = f'''<b>Hello, I am {bot_name}
+<blockquote>I can help you mirror links, files, or torrents to Google Drive, rclone cloud, or Telegram.</blockquote>
+Type /{BotCommands.HelpCommand} to see the list of commands.
+
+Uptime: {get_readable_time(time() - botStartTime)} | Authorized? {status}</b>'''
         await send_to_chat(message=message, text=start_string, buttons=reply_markup, reply=True, photo=True)
     await DbManager().update_pm_users(message.from_user.id)
 

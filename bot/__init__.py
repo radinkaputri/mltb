@@ -227,6 +227,13 @@ else:
     IS_PREMIUM_USER = False
     user = ""
 
+MEGA_EMAIL = environ.get("MEGA_EMAIL", "")
+MEGA_PASSWORD = environ.get("MEGA_PASSWORD", "")
+if len(MEGA_EMAIL) == 0 or len(MEGA_PASSWORD) == 0:
+    log_warning("MEGA Credentials not provided!")
+    MEGA_EMAIL = ""
+    MEGA_PASSWORD = ""
+
 JD_EMAIL = environ.get("JD_EMAIL", "")
 JD_PASS = environ.get("JD_PASS", "")
 if len(JD_EMAIL) == 0 or len(JD_PASS) == 0:
@@ -463,10 +470,8 @@ FSUB_IDS = environ.get('FSUB_IDS', '')
 if len(FSUB_IDS) == 0:
     FSUB_IDS = ''
 
-SAFE_MODE = environ.get('SAFE_MODE', '')
-if len(SAFE_MODE) == 0:
-    log_warning('SAFE_MODE Is Not Enabled')
-    SAFE_MODE = ''
+SAFE_MODE = environ.get("SAFE_MODE", "")
+SAFE_MODE = int(SAFE_MODE) if len(SAFE_MODE) > 0 else 30
 
 SET_COMMANDS = environ.get('SET_COMMANDS', '')
 SET_COMMANDS = SET_COMMANDS.lower() == 'true'

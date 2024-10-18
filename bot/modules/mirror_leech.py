@@ -17,6 +17,7 @@ from bot.helper.ext_utils.links_utils import (
     is_url,
     is_magnet,
     is_gdrive_link,
+    is_mega_link,
     is_rclone_path,
     is_telegram_link,
     is_gdrive_id,
@@ -32,6 +33,7 @@ from bot.helper.mirror_leech_utils.download_utils.direct_link_generator import (
     direct_link_generator,
 )
 from bot.helper.mirror_leech_utils.download_utils.gd_download import add_gd_download
+from bot.helper.mirror_leech_utils.download_utils.mega_download import add_mega_download
 from bot.helper.mirror_leech_utils.download_utils.jd_download import add_jd_download
 from bot.helper.mirror_leech_utils.download_utils.qbit_download import add_qb_torrent
 from bot.helper.mirror_leech_utils.download_utils.rclone_download import (
@@ -314,6 +316,7 @@ class Mirror(TaskListener):
             and not self.isQbit
             and not is_magnet(self.link)
             and not is_rclone_path(self.link)
+            and not is_mega_link(self.link)
             and not is_gdrive_link(self.link)
             and not self.link.endswith(".torrent")
             and file_ is None

@@ -168,13 +168,19 @@ async def get_readable_message(sid, is_user, page_no=1, status="All", page_step=
         tasks[start_position : STATUS_LIMIT + start_position], start=1
     ):
         tstatus = await sync_to_async(task.status) if status == "All" else status
-        if config_dict['SAFE_MODE']:
-            msg += f"<b>{index + start_position}.{tstatus}: Safe Mode.</b>"
+        elapse = {get_readable_time(time() - task.message.date.timestamp())}
+        elapsed = "-" if elapse < 1 else get_readable_time(elapse)
+        user_tag = task.listener.tag.replace("@", "").replace("_", " ")
+        cancel_task = f"<b>/{BotCommands.CancelTaskCommand}_{task.gid()}</b>"
+        safe_mode = int(config_dict["SAFE_MODE"])
+        if safe_mode > 0:
+          if elapse <= safe_mode:
+              msg += f"<b>{index + start_position}.{tstatus}: </b><code>{escape(f'{task.name()}')}</code>"
+          else:
+              msg += f"<b>{index + start_position}.{tstatus}: </b><code>Your request is being processed, please be patient.</code>"
         else:
-            msg += f"<b>{index + start_position}.<a href='{task.listener.message.link}'>{tstatus}</a>: </b>"
-            msg += f"<code>{escape(f'{task.name()}')}</code>"
+            msg += f"<b>{index + start_position}.{tstatus}: <code>{escape(f'{task.name()}')}</code></b>"
         if tstatus not in [
-            MirrorStatus.STATUS_SPLITTING,
             MirrorStatus.STATUS_SEEDING,
             MirrorStatus.STATUS_SAMVID,
             MirrorStatus.STATUS_CONVERTING,
@@ -185,25 +191,26 @@ async def get_readable_message(sid, is_user, page_no=1, status="All", page_step=
                 if iscoroutinefunction(task.progress)
                 else task.progress()
             )
-            msg += f"\n{get_progress_bar_string(progress)} {progress}"
-            msg += f"\n<b>Done:</b> {task.processed_bytes()} of {task.size()}"
-            msg += f"\n<b>Speed:</b> {task.engine} {task.speed()}"
-            msg += f"\n<b>ETA:</b> {task.eta()} | <b>Elapsed:</b> {get_readable_time(time() - task.message.date.timestamp())}"
-            msg += f"\n<b>User:</b> {task.listener.message.from_user.mention(style='html')} | <b>ID:</b> <code>{task.listener.message.from_user.id}</code>"
+            msg += f"\n<blockquote>┎{get_progress_bar_string(progress)} {progress}"
+            msg += f"\n┠<b>Done:</b> {task.processed_bytes()} of {task.size()}"
+            msg += f"\n┠<b>Speed:</b> {task.engine} {task.speed()}"
+            msg += f"\n┠<b>ETA:</b> {task.eta()} | <b>Elapsed:</b> {elapsed}"
+            msg += f"\n┠<b>User:</b> {user_tag} | <b>ID:</b> {task.listener.message.from_user.id}"
             if hasattr(task, "seeders_num"):
                 try:
-                    msg += f"\n<b>Seeders:</b> {task.seeders_num()} | <b>Leechers:</b> {task.leechers_num()}"
+                    msg += f"\n┠<b>Seeders:</b> {task.seeders_num()} | <b>Leechers:</b> {task.leechers_num()}"
                 except:
                     pass
         elif tstatus == MirrorStatus.STATUS_SEEDING:
-            msg += f"\n<b>Size: </b>{task.size()}"
-            msg += f"\n<b>Speed: </b>{task.seed_speed()}"
+            msg += f"\n┠<b>Size: </b>{task.size()}"
+            msg += f"\n┠<b>Speed: </b>{task.seed_speed()}"
             msg += f" | <b>Uploaded: </b>{task.uploaded_bytes()}"
-            msg += f"\n<b>Ratio: </b>{task.ratio()}"
+            msg += f"\n┠<b>Ratio: </b>{task.ratio()}"
             msg += f" | <b>Time: </b>{task.seeding_time()}"
         else:
-            msg += f"\n<b>Size: </b>{task.size()}"
-        msg += f"\n<b>Stop: </b><code>/{BotCommands.CancelTaskCommand[1]} {task.gid()}</code>\n\n"
+            msg += f"\n<blockquote>┎<b>Size: </b>{task.size()}"
+            msg += f"\n┠<b>User:</b> {user_tag} | <b>ID:</b> {task.listener.message.from_user.id}"
+        msg += f"\n┖<b>Stop: </b>{cancel_task}</blockquote>\n\n"
 
     if len(msg) == 0:
         if status == "All":
@@ -211,12 +218,14 @@ async def get_readable_message(sid, is_user, page_no=1, status="All", page_step=
         else:
             msg = f"No Active {status} Tasks!\n\n"
     buttons = ButtonMaker()
+    if is_user:
+        buttons.ibutton("ʀᴇꜰʀᴇꜱʜ", f"status {sid} ref", position="header")
     if not is_user:
-        buttons.ibutton("📜", f"status {sid} ov", position="header")
+        buttons.ibutton("ᴏᴠᴇʀᴠɪᴇᴡ", f"status {sid} ov", position="footer")
     if len(tasks) > STATUS_LIMIT:
         msg += f"<b>Page:</b> {page_no}/{pages} | <b>Tasks:</b> {tasks_no} | <b>Step:</b> {page_step}\n"
-        buttons.ibutton("<<", f"status {sid} pre", position="header")
-        buttons.ibutton(">>", f"status {sid} nex", position="header")
+        buttons.ibutton("⬅️", f"status {sid} pre", position="header")
+        buttons.ibutton("➡️", f"status {sid} nex", position="header")
         if tasks_no > 30:
             for i in [1, 2, 4, 6, 8, 10, 15]:
                 buttons.ibutton(i, f"status {sid} ps {i}", position="footer")
@@ -228,7 +237,6 @@ async def get_readable_message(sid, is_user, page_no=1, status="All", page_step=
         msg += f"<b>Task Limit: </b>{config_dict['BOT_MAX_TASKS']} | <b>Run:</b> {len(tasks)} | <b>Free:</b> {config_dict['BOT_MAX_TASKS'] - len(tasks)}"
     else:
         msg += f"<b>Tasks Running:</b> {len(tasks)}"
-    buttons.ibutton("♻️", f"status {sid} ref", position="header")
     button = buttons.build_menu(8)
     msg += f"\n<b>CPU:</b> {cpu_percent()}% | <b>FREE:</b> {get_readable_file_size(disk_usage(DOWNLOAD_DIR).free)}"
     msg += f"\n<b>RAM:</b> {virtual_memory().percent}% | <b>UP:</b> {get_readable_time(time() - botStartTime)}"
