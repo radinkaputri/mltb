@@ -256,18 +256,20 @@ class TaskListener(TaskConfig):
         ):
             await DbManager().rm_complete_task(self.message.link)
         pmbutton = await get_bot_pm_button()
-        msg = f"<b>Name: </b><code>{escape(self.name)}</code>"
-        msg += f"\n\n<blockquote><b>┎Size: </b>{get_readable_file_size(self.size)}"
-        msg += f"\n<b>┠Elapse: </b>{get_readable_time(time() - self.time)}"
+        msg = (
+            f"\n<b>Hey {self.tag}!\nYour job is done.</b>"
+            f"\n\n<blockquote><code>Size  </code>: {get_readable_file_size(self.size)}"
+            f"\n<code>Past  </code>: {get_readable_time(time() - self.time)}"
+            f"\n<code>Mode  </code>: {self.mode}"
+        )
         LOGGER.info(f"Task Done: {self.name}")
         if self.isLeech:
-            msg += f"\n<b>┠Total Files: </b>{folders}"
+            msg += f"\n<code>Files </code>: {folders}\n"
             if mime_type != 0:
-                msg += f"\n<b>┠Corrupted Files: </b>{mime_type}"
-            msg += f"\n┖<b>cc: </b>{self.tag}</blockquote>\n\n"
+                msg += f"<code>Error </code>: {mime_type}\n"
             if not files:
                 if config_dict["BOT_PM"] and self.message.chat.type != self.message.chat.type.PRIVATE:
-                    pmmsg = f"<b>Sent to private message</b>"
+                    pmsg += f"</blockquote>\n<b><i>Files has been sent in your DM.</b></i>"
                     await sendMessage(self.message, msg +pmmsg, pmbutton)
                 else:
                     await sendMessage(self.message, msg)
@@ -282,18 +284,18 @@ class TaskListener(TaskConfig):
                 if fmsg != "":
                     if config_dict["SAFE_MODE"]:
                         fmsg = ""
-                        pmmsg = f"<b>Sent to private message</b>"
+                        pmsg += f"</blockquote>\n<b><i>Files has been sent in your DM.</b></i>"
                     else:
-                        pmmsg = f"\n<b>Sent to private message</b>"
+                        pmsg += f"</blockquote>\n<b><i>Files has been sent in your DM.</b></i>"
                     if config_dict["BOT_PM"] and self.message.chat.type != self.message.chat.type.PRIVATE:
                         await sendMessage(self.message, msg + fmsg + pmmsg, pmbutton)
                     else:
                         await sendMessage(self.message, msg + fmsg)
         else:
-            msg += f"\n<b>┠Type: </b>{mime_type}"
+            msg += f"\n<code>Type  </code>: {mime_type}"
             if mime_type == "Folder":
-                msg += f"\n<b>┠SubFolders: </b>{folders}"
-                msg += f"\n<b>┠Files: </b>{files}"
+                msg += f"\n<code>Files </code>: {files}"
+                msg += f"\n<code>Folder</code>: {folders}"
             if (
                 link
                 or rclonePath
@@ -330,11 +332,10 @@ class TaskListener(TaskConfig):
                             buttons.ubutton("🌐 View Link", share_urls)
                 button = buttons.build_menu(2)
             else:
-                msg += f"\n\nPath: <code>{rclonePath}</code>"
+                msg += f"\n\n<code>Path  </code>: {rclonePath}"
                 button = None
-            msg += f"\n┖<b>cc: </b>{self.tag}</blockquote>"
             if config_dict["BOT_PM"] and self.message.chat.type != self.message.chat.type.PRIVATE:
-                bmsg = f"\n\n<b>Sent to cloud storage</b>"
+                bmsg = f"\n</blockquote>\n\n<b>Link has been sent to your DM.</b>"
                 await send_to_chat(chat_id=self.message.from_user.id, message=self.message, text=msg, buttons=button, photo=True)
                 await sendMessage(self.message, msg+bmsg, pmbutton)
             else:
@@ -369,7 +370,10 @@ class TaskListener(TaskConfig):
                 del task_dict[self.mid]
             count = len(task_dict)
             self.removeFromSameDir()
-        msg = f"{self.tag} Download: {escape(error)}"
+        msg = f"Sorry {self.tag}!\nYour download has been stopped."
+        msg += f"\n\n<blockquote><code>Reason </code>: {escape(str(error))}"
+        msg += f"\n<code>Past   </code>: {get_readable_time(time() - self.time)}"
+        msg += f"\n<code>Mode   </code>: {self.mode}</blockquote>"
         await sendMessage(self.message, msg, button)
         if count == 0:
             await self.clean()
@@ -408,7 +412,10 @@ class TaskListener(TaskConfig):
             if self.mid in task_dict:
                 del task_dict[self.mid]
             count = len(task_dict)
-        await sendMessage(self.message, f"{self.tag} {escape(error)}")
+        msg = f"Sorry {self.tag}!\nYour upload has been stopped."
+        msg += f"\n\n<blockquote><code>Reason </code>: {escape(str(error))}"
+        msg += f"\n<code>Past   </code>: {get_readable_time(time() - self.time)}"
+        msg += f"\n<code>Mode   </code>: {self.mode}</blockquote>"
         if count == 0:
             await self.clean()
         else:
